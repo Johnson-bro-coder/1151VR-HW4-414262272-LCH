@@ -19,6 +19,8 @@ public class AirplaneController : MonoBehaviour
     [Header("機動轉向設定")]
     [Tooltip("俯仰速度 (Pitch - 抬頭/低頭)")]
     public float pitchSensitivity = 50f;
+    [Tooltip("是否反轉俯仰操作 (預設取消勾選：W / ↑ 為抬頭；若勾選則 W / ↑ 為俯衝)")]
+    public bool invertPitch = false;
     [Tooltip("偏航轉向速度 (Yaw - 左右轉)")]
     public float yawSensitivity = 35f;
     [Tooltip("滾轉速度 (Roll - 機身側滾)")]
@@ -117,8 +119,9 @@ public class AirplaneController : MonoBehaviour
             currentSpeed = Mathf.MoveTowards(currentSpeed, baseSpeed, (acceleration * 0.5f) * Time.deltaTime);
         }
 
-        // 旋轉計算
-        float pitchAmount = pitch * pitchSensitivity * Time.deltaTime;
+        // 旋轉計算 (預設 -pitch 為抬頭，符合一般玩家操作直覺)
+        float pitchDir = invertPitch ? 1f : -1f;
+        float pitchAmount = pitch * pitchDir * pitchSensitivity * Time.deltaTime;
         float yawAmount = yaw * yawSensitivity * Time.deltaTime;
         // 左右轉動時自動輔助傾斜 (Banking)
         float bankAmount = -yaw * rollSensitivity * 0.5f * Time.deltaTime;
